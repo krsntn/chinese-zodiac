@@ -86,9 +86,7 @@ export default function Home() {
       <header className="py-10 text-center">
         <div className="container px-4">
           <div className="space-y-1">
-            <h1
-              className={`text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-red-200 ${pacifico.className}`}
-            >
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-red-200">
               Chinese Zodiac Ages
             </h1>
             <p className="mx-auto max-w-2xl text-red-300 md:text-xl/relaxed">
