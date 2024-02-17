@@ -5,6 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import zodiacData from "./zodiac.json";
 import { useState } from "react";
+import { Pacifico, Ma_Shan_Zheng, Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+});
+const pacifico = Pacifico({ weight: "400", subsets: ["latin"] });
+const maShanZheng = Ma_Shan_Zheng({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -22,11 +32,19 @@ export default function Home() {
       <div className="text-center text-lg">
         {data.map(([i, age]) => (
           <div key={i} className="grid grid-cols-[4fr_auto_3fr]">
-            <span className={`${searchYear === i ? "text-xl font-black" : ""}`}>
+            <span
+              className={`${searchYear === i ? "text-2xl text-red-600" : ""}`}
+            >
               {i}
             </span>
-            <span className="">{"->"}</span>
-            <span className={`${searchYear === i ? "text-xl font-black" : ""}`}>
+            <span
+              className={`${inter.className} ${searchYear === i ? "text-2xl text-red-600" : ""}`}
+            >
+              {"->"}
+            </span>
+            <span
+              className={`${searchYear === i ? "text-2xl text-red-600" : ""}`}
+            >
               {age}
             </span>
           </div>
@@ -41,12 +59,22 @@ export default function Home() {
       ([_, value]) => (searchYear % value) % 12 === 0,
     );
 
-    if (!zodiac) return <p className="text-center text-red-100">Not found.</p>;
+    if (!zodiac)
+      return (
+        <p className={`text-center text-red-100 ${inter.className}`}>
+          Not found.
+        </p>
+      );
 
     return (
       <Card className="bg-red-200 border-0 w-[80%] max-w-[280px] mx-auto">
         <CardHeader>
-          <CardTitle className="text-center">{zodiac[0]}</CardTitle>
+          <CardTitle className="text-center">
+            {zodiac[0].split(" ")[0]}
+            <span className={`${maShanZheng.className} ml-2 text-3xl`}>
+              {zodiac[0].split(" ")[1]}
+            </span>
+          </CardTitle>
         </CardHeader>
         <CardContent>{renderTable(zodiac[1], searchYear)}</CardContent>
       </Card>
@@ -58,7 +86,9 @@ export default function Home() {
       <header className="py-10 text-center">
         <div className="container px-4">
           <div className="space-y-1">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-red-200">
+            <h1
+              className={`text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-red-200 ${pacifico.className}`}
+            >
               Chinese Zodiac Ages
             </h1>
             <p className="mx-auto max-w-2xl text-red-300 md:text-xl/relaxed">
@@ -98,7 +128,9 @@ export default function Home() {
           ) : null}
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,_minmax(180px,_1fr))] gap-4">
+        <div
+          className={`grid grid-cols-[repeat(auto-fit,_minmax(180px,_1fr))] gap-4 ${pacifico.className}`}
+        >
           {search.length === 4 ? (
             <>{renderSearch(search)}</>
           ) : (
@@ -106,7 +138,14 @@ export default function Home() {
               {Object.entries(zodiacData).map(([key, value]) => (
                 <Card key={value} className="bg-red-200 border-0">
                   <CardHeader>
-                    <CardTitle className="text-center">{key}</CardTitle>
+                    <CardTitle className="text-center">
+                      {key.split(" ")[0]}
+                      <span
+                        className={`${maShanZheng.className} ml-2 text-3xl`}
+                      >
+                        {key.split(" ")[1]}
+                      </span>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>{renderTable(value)}</CardContent>
                 </Card>
