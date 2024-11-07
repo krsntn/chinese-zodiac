@@ -54,29 +54,56 @@ export default function Home() {
   };
 
   const renderSearch = (search: string) => {
-    const searchYear = parseInt(search);
-    const zodiac = Object.entries(zodiacData).find(
-      ([_, value]) => (searchYear % value) % 12 === 0,
-    );
+    const searchData = parseInt(search);
+    const currentYear = new Date().getFullYear();
+    let birthYear = 0;
+    let zodiacResult = null;
 
-    if (!zodiac)
+    // Case 1: If the search length is 4 (looking for a specific year)
+    if (search.length === 4) {
+      if (searchData < 1924 || searchData > currentYear) {
+        return (
+          <p className={`text-center text-red-100 ${inter.className}`}>
+            Please enter a number between 1924 and {currentYear}.
+          </p>
+        );
+      }
+
+      // Find the zodiac based on the year provided
+      zodiacResult = Object.entries(zodiacData).find(
+        ([_, value]) => (searchData % value) % 12 === 0,
+      );
+    } else if (search.length < 4) {
+      // Case 2: If the search length is less than 4 (looking for an age)
+      birthYear = currentYear - searchData;
+
+      // Find the zodiac based on the calculated birth year
+      zodiacResult = Object.entries(zodiacData).find(
+        ([_, value]) => (birthYear % value) % 12 === 0,
+      );
+    }
+
+    if (!zodiacResult) {
       return (
         <p className={`text-center text-red-100 ${inter.className}`}>
           Not found.
         </p>
       );
+    }
 
     return (
       <Card className="bg-red-200 border-0 w-[80%] max-w-[280px] mx-auto">
         <CardHeader>
           <CardTitle className="text-center">
-            {zodiac[0].split(" ")[0]}
+            {zodiacResult[0].split(" ")[0]}
             <span className={`${maShanZheng.className} ml-2 text-3xl`}>
-              {zodiac[0].split(" ")[1]}
+              {zodiacResult[0].split(" ")[1]}
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent>{renderTable(zodiac[1], searchYear)}</CardContent>
+        <CardContent>
+          {renderTable(zodiacResult[1], birthYear || searchData)}
+        </CardContent>
       </Card>
     );
   };
@@ -101,18 +128,12 @@ export default function Home() {
           <Input
             inputMode="numeric"
             className="bg-transparent text-red-100 placeholder:text-red-100"
-            placeholder="Search year of birth"
+            placeholder="Enter the birth year or age"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
             onKeyDown={(e) => {
               if (e.key !== "Backspace" && isNaN(parseInt(e.key))) {
                 e.preventDefault();
-              }
-            }}
-            onKeyUp={(e) => {
-              const target = e.target as HTMLInputElement;
-              if (target.value.length === 4) {
-                target.blur();
               }
             }}
           />
@@ -129,7 +150,7 @@ export default function Home() {
         <div
           className={`grid grid-cols-[repeat(auto-fit,_minmax(180px,_1fr))] gap-4 ${pacifico.className}`}
         >
-          {search.length === 4 ? (
+          {search.length > 0 ? (
             <>{renderSearch(search)}</>
           ) : (
             <>
